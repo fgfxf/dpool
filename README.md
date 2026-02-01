@@ -26,14 +26,25 @@ int compute(int a, int b)
 {
     return a + b;
 }
-
+int myadd2(int& a, int& b) {
+    a = 10;
+    b = 20;
+    return a + b;
+}
 int main()
 {
     // 设置最大线程数为 10
     dpool::ThreadPool pool(10);
-
     auto fut = pool.submit(compute, 100, 100);
     std::cout << "100 + 100 = " << fut.get() << std::endl;
+
+    int a = 20;
+    int b = 50;
+    std::cout << "a=" << a << ",b=" << b << std::endl;
+    pool.submit(myadd2,std::ref(a),std::ref(b));//传引用的参数需要std::ref , 直接写是不行的。普通调用则不用ref
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::cout << "a=" << a << ",b=" << b << std::endl;
+
     
     return 0;
 }
